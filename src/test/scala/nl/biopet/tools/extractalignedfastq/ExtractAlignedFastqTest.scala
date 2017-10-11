@@ -7,7 +7,7 @@ object ExtractAlignedFastqTest extends BiopetTest {
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {
-      ToolTemplate.main(Array())
+      ExtractAlignedFastq.main(Array())
     }
   }
 }
