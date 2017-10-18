@@ -22,9 +22,6 @@ class ExtractAlignedFastqTest extends BiopetTest with MockitoSugar {
     }
   }
 
-  def resourceFile(p: String): File =
-    new File(resourcePath(p))
-
   def makeInterval(chr: String, start: Int, end: Int): Iterator[Interval] =
     Iterator(new Interval(chr, start, end))
 
