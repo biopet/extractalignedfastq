@@ -4,14 +4,14 @@ import java.io.File
 
 import htsjdk.samtools.fastq.{BasicFastqWriter, FastqReader, FastqRecord}
 import htsjdk.samtools.util.Interval
-import nl.biopet.test.BiopetTest
+import nl.biopet.utils.test.tools.ToolTest
 import org.mockito.Matchers.anyObject
 import org.mockito.Mockito.{inOrder => inOrd}
 import org.mockito.Mockito.{times, verify}
 import org.scalatest.mock.MockitoSugar
 import org.testng.annotations.{DataProvider, Test}
 
-class ExtractAlignedFastqTest extends BiopetTest with MockitoSugar {
+class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
 
   import ExtractAlignedFastq._
   

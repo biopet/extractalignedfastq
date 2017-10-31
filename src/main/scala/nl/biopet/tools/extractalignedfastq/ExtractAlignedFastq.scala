@@ -10,7 +10,7 @@ import nl.biopet.utils.tool.ToolCommand
 import scala.collection.mutable.{Set => MSet}
 import scala.collection.JavaConverters._
 
-object ExtractAlignedFastq extends ToolCommand {
+object ExtractAlignedFastq extends ToolCommand[Args] {
   def main(args: Array[String]): Unit = {
     val parser = new ArgsParser(toolName)
     val cmdArgs =
