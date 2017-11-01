@@ -12,6 +12,7 @@ import org.scalatest.mock.MockitoSugar
 import org.testng.annotations.{DataProvider, Test}
 
 class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
+  def toolCommand: ExtractAlignedFastq.type = ExtractAlignedFastq
 
   import ExtractAlignedFastq._
   
