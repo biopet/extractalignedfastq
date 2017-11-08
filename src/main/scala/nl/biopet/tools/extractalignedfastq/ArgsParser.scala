@@ -16,9 +16,10 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
     if (x.exists) success else failure("Input BAM file not found")
   } text "Input BAM file"
 
-  opt[String]('r', "interval") required () unbounded () valueName "<interval>" action { (x, c) =>
-    // yes, we are appending and yes it's O(n) ~ preserving order is more important than speed here
-    c.copy(intervals = c.intervals :+ x)
+  opt[String]('r', "interval") required () unbounded () valueName "<interval>" action {
+    (x, c) =>
+      // yes, we are appending and yes it's O(n) ~ preserving order is more important than speed here
+      c.copy(intervals = c.intervals :+ x)
   } text "Interval strings (e.g. chr1:1-100)"
 
   opt[File]('i', "in1") required () valueName "<fastq>" action { (x, c) =>
@@ -53,7 +54,8 @@ class ArgsParser(cmdName: String) extends AbstractOptParser[Args](cmdName) {
          second pair, the value of `read_suffix_length` should be 2."
       """.stripMargin
 
-  note("""
+  note(
+    """
          |This tool creates FASTQ file(s) containing reads mapped to the given alignment intervals.
        """.stripMargin)
 

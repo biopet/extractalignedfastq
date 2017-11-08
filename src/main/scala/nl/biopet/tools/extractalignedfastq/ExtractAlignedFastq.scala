@@ -86,7 +86,8 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
     // make ints from coordinate strings
     // NOTE: while it is possible for coordinates to exceed Int.MaxValue, we are limited
     // by the Interval constructor only accepting ints
-    def intFromCoord(s: String): Int = s.replaceAll(",", "").replaceAll("\\.", "").toInt
+    def intFromCoord(s: String): Int =
+      s.replaceAll(",", "").replaceAll("\\.", "").toInt
 
     inStrings.map {
       case ptn1(chr, start, end) if intFromCoord(end) >= intFromCoord(start) =>
@@ -94,7 +95,9 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
       case ptn2(chr, start) =>
         val startCoord = intFromCoord(start)
         new Interval(chr, startCoord, startCoord)
-      case otherwise => throw new IllegalArgumentException("Invalid interval string: " + otherwise)
+      case otherwise =>
+        throw new IllegalArgumentException(
+          "Invalid interval string: " + otherwise)
     }.toIterator
   }
 
@@ -108,10 +111,11 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
     * @param commonSuffixLength length of suffix common to all read pairs
     * @return
     */
-  def makeMembershipFunction(iv: Iterator[Interval],
-                             inAln: File,
-                             minMapQ: Int = 0,
-                             commonSuffixLength: Int = 0): (FastqInput => Boolean) = {
+  def makeMembershipFunction(
+      iv: Iterator[Interval],
+      inAln: File,
+      minMapQ: Int = 0,
+      commonSuffixLength: Int = 0): (FastqInput => Boolean) = {
 
     val inAlnReader = SamReaderFactory
       .make()
@@ -129,15 +133,16 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
       }
 
     val queries: Array[QueryInterval] = iv.toList
-      // transform to QueryInterval
-      .map(x => new QueryInterval(getSequenceIndex(x.getContig), x.getStart, x.getEnd))
+    // transform to QueryInterval
+      .map(x =>
+        new QueryInterval(getSequenceIndex(x.getContig), x.getStart, x.getEnd))
       // sort Interval
       .sortBy(x => (x.referenceIndex, x.start, x.end))
       // cast to array
       .toArray
 
     lazy val selected: MSet[String] = inAlnReader
-      // query BAM file for overlapping reads
+    // query BAM file for overlapping reads
       .queryOverlapping(queries)
       // for Scala compatibility
       .asScala
@@ -145,11 +150,11 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
       .filter(x => x.getMappingQuality >= minMapQ)
       // iteratively add read name to the selected set
       .foldLeft(MSet.empty[String])(
-      (acc, x) => {
-        logger.debug("Adding " + x.getReadName + " to set ...")
-        acc += x.getReadName
-      }
-    )
+        (acc, x) => {
+          logger.debug("Adding " + x.getReadName + " to set ...")
+          acc += x.getReadName
+        }
+      )
 
     (pair: FastqInput) =>
       pair._2 match {
