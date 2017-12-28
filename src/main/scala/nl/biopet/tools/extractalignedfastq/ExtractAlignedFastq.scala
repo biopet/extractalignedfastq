@@ -239,6 +239,8 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
                   "--in1",
                   "myFastq_R1.fastq",
                   "--interval",
-                  "chr5:100-200")}
+                  "chr5:100-200",
+                  "--out1",
+                  "output.fastq")}
      """.stripMargin
 }
