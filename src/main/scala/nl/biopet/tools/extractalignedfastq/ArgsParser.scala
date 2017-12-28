@@ -7,10 +7,6 @@ import nl.biopet.utils.tool.{AbstractOptParser, ToolCommand}
 class ArgsParser(toolCommand: ToolCommand[Args])
     extends AbstractOptParser[Args](toolCommand) {
 
-  head(s"""
-          |$cmdName - Select aligned FASTQ records
-      """.stripMargin)
-
   opt[File]('I', "input_file") required () valueName "<bam>" action { (x, c) =>
     c.copy(inputBam = x)
   } validate { x =>
