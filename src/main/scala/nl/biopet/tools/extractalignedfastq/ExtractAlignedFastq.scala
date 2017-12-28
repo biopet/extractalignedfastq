@@ -203,4 +203,35 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
         outputFastq2.write(rec._2)
       })
 
+  def descriptionText: String =
+    s"""
+       |This tool extracts reads from a BAM file based on alignment intervals.
+       |E.g if one is interested in a specific location
+       |this tool extracts the full reads from the location.
+       |The tool is also very useful to create test data sets.
+     """.stripMargin
+
+  def manualText: String =
+    """
+      |This tool creates FASTQ file(s) containing reads mapped to the given alignment intervals. A set of FASTQ files that was
+      |used in creating the BAM file is also required since this is used for retrieving full sequences of FASTQ records which
+      |map to the given region. This is useful since some of the records may have undergone modifications such as quality
+      |trimming before alignment. In this case, retrieving the aligned SAM records will only give the modified sequence.
+      |
+      |* Note that this tool works for single end and paired end data. The below example can be easily extended for
+      |paired end data. The only thing one should add is: --in2 myFastq_R2.fastq --out2 myOutFastq_R2.fastq
+      |* The interval is just a genomic position or multiple genomic positions wherefrom one wants to extract the reads.
+      |
+    """.stripMargin
+
+  def exampleText: String =
+    s"""
+       |To extract reads from `myBam.bam` that originate from `myFastq_r1.fasta` and align to chr5 at positions 100-200:
+       |${example("--input_file",
+                  "myBam.bam",
+                  "--in1",
+                  "myFastq_R1.fastq",
+                  "--interval",
+                  "chr5:100-200")}
+     """.stripMargin
 }
