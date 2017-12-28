@@ -16,6 +16,13 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
 
+    // Require input files to exist
+    require(cmdArgs.inputBam.exists(),"Input BAM file not found")
+    require(cmdArgs.inputFastq1.exists(),"Input FASTQ file 1 not found")
+    if (cmdArgs.inputFastq2.isDefined){
+      require(cmdArgs.inputFastq2.get.exists(),"Input FASTQ file 2 not found")
+    }
+
     logger.info("Start")
 
     val memFunc = makeMembershipFunction(

@@ -9,8 +9,6 @@ class ArgsParser(toolCommand: ToolCommand[Args])
 
   opt[File]('I', "input_file") required () valueName "<bam>" action { (x, c) =>
     c.copy(inputBam = x)
-  } validate { x =>
-    if (x.exists) success else failure("Input BAM file not found")
   } text "Input BAM file"
 
   opt[String]('r', "interval") required () unbounded () valueName "<interval>" action {
@@ -21,14 +19,10 @@ class ArgsParser(toolCommand: ToolCommand[Args])
 
   opt[File]('i', "in1") required () valueName "<fastq>" action { (x, c) =>
     c.copy(inputFastq1 = x)
-  } validate { x =>
-    if (x.exists) success else failure("Input FASTQ file 1 not found")
   } text "Input FASTQ file 1"
 
   opt[File]('j', "in2") optional () valueName "<fastq>" action { (x, c) =>
     c.copy(inputFastq2 = Option(x))
-  } validate { x =>
-    if (x.exists) success else failure("Input FASTQ file 2 not found")
   } text "Input FASTQ file 2 (default: none)"
 
   opt[File]('o', "out1") required () valueName "<fastq>" action { (x, c) =>
