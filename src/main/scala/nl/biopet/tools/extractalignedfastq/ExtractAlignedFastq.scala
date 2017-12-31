@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2014 Sequencing Analysis Support Core - Leiden University Medical Center
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package nl.biopet.tools.extractalignedfastq
 
 import java.io.File
@@ -12,9 +33,16 @@ import scala.collection.JavaConverters._
 
 object ExtractAlignedFastq extends ToolCommand[Args] {
   def emptyArgs: Args = Args()
-  def argsParser = new ArgsParser(toolName)
+  def argsParser = new ArgsParser(this)
   def main(args: Array[String]): Unit = {
     val cmdArgs = cmdArrayToArgs(args)
+
+    // Require input files to exist
+    require(cmdArgs.inputBam.exists(), "Input BAM file not found")
+    require(cmdArgs.inputFastq1.exists(), "Input FASTQ file 1 not found")
+    if (cmdArgs.inputFastq2.isDefined) {
+      require(cmdArgs.inputFastq2.get.exists(), "Input FASTQ file 2 not found")
+    }
 
     logger.info("Start")
 
@@ -203,4 +231,37 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
         outputFastq2.write(rec._2)
       })
 
+  def descriptionText: String =
+    s"""
+       |This tool extracts reads from a BAM file based on alignment intervals.
+       |E.g if one is interested in a specific location
+       |this tool extracts the full reads from the location.
+       |The tool is also very useful to create test data sets.
+     """.stripMargin
+
+  def manualText: String =
+    """
+      |This tool creates FASTQ file(s) containing reads mapped to the given alignment intervals. A set of FASTQ files that was
+      |used in creating the BAM file is also required since this is used for retrieving full sequences of FASTQ records which
+      |map to the given region. This is useful since some of the records may have undergone modifications such as quality
+      |trimming before alignment. In this case, retrieving the aligned SAM records will only give the modified sequence.
+      |
+      |* Note that this tool works for single end and paired end data. The below example can be easily extended for
+      |paired end data. The only thing one should add is: --in2 myFastq_R2.fastq --out2 myOutFastq_R2.fastq
+      |* The interval is just a genomic position or multiple genomic positions wherefrom one wants to extract the reads.
+      |
+    """.stripMargin
+
+  def exampleText: String =
+    s"""
+       |To extract reads from `myBam.bam` that originate from `myFastq_r1.fasta` and align to chr5 at positions 100-200:
+       |${example("--input_file",
+                  "myBam.bam",
+                  "--in1",
+                  "myFastq_R1.fastq",
+                  "--interval",
+                  "chr5:100-200",
+                  "--out1",
+                  "output.fastq")}
+     """.stripMargin
 }
