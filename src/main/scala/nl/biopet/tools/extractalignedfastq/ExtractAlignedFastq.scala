@@ -104,7 +104,8 @@ object ExtractAlignedFastq extends ToolCommand[Args] {
     *
     * @param inStrings iterable yielding input interval string
     */
-  def makeIntervalFromString(inStrings: Iterable[String]): Iterator[Interval] = {
+  def makeIntervalFromString(
+      inStrings: Iterable[String]): Iterator[Interval] = {
 
     // FIXME: can we combine these two patterns into one regex?
     // matches intervals with start and end coordinates
