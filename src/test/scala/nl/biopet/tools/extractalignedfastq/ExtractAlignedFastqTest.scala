@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2014 Biopet
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 package nl.biopet.tools.extractalignedfastq
 
 import java.io.File
@@ -15,7 +36,7 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
   def toolCommand: ExtractAlignedFastq.type = ExtractAlignedFastq
 
   import ExtractAlignedFastq._
-  
+
   @Test
   def testNoArgs(): Unit = {
     intercept[IllegalArgumentException] {
@@ -35,8 +56,11 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
   def makeSingleRecords(headers: String*): Map[String, FastqInput] =
     headers.map(x => (x, (makeRecord(x), None))).toMap
 
-  def makePairRecords(headers: (String, (String, String))*): Map[String, FastqInput] =
-    headers.map(x => (x._1, (makeRecord(x._2._1), Some(makeRecord(x._2._2))))).toMap
+  def makePairRecords(
+      headers: (String, (String, String))*): Map[String, FastqInput] =
+    headers
+      .map(x => (x._1, (makeRecord(x._2._1), Some(makeRecord(x._2._2)))))
+      .toMap
 
   def makeClue(tName: String, f: File, rName: String): String =
     tName + " on " + f.getName + ", read " + rName + ": "
@@ -86,7 +110,8 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
     val thrown = intercept[IllegalArgumentException] {
       makeMembershipFunction(iv, inAln)
     }
-    thrown.getMessage should ===("Chromosome chrP is not found in the alignment file")
+    thrown.getMessage should ===(
+      "Chromosome chrP is not found in the alignment file")
   }
 
   @DataProvider(name = "singleAlnProvider1", parallel = true)
@@ -96,19 +121,31 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
     val sBam01 = resourceFile("/single01.bam")
 
     Array(
-      Array("adjacent left", makeInterval("chrQ", 30, 49), sBam01, sFastq1, sFastq1Default),
-      Array("adjacent right", makeInterval("chrQ", 200, 210), sBam01, sFastq1, sFastq1Default),
-      Array("no overlap", makeInterval("chrQ", 220, 230), sBam01, sFastq1, sFastq1Default),
+      Array("adjacent left",
+            makeInterval("chrQ", 30, 49),
+            sBam01,
+            sFastq1,
+            sFastq1Default),
+      Array("adjacent right",
+            makeInterval("chrQ", 200, 210),
+            sBam01,
+            sFastq1,
+            sFastq1Default),
+      Array("no overlap",
+            makeInterval("chrQ", 220, 230),
+            sBam01,
+            sFastq1,
+            sFastq1Default),
       Array("partial overlap",
-        makeInterval("chrQ", 430, 460),
-        sBam01,
-        sFastq1,
-        sFastq1Default.updated("r04", true)),
+            makeInterval("chrQ", 430, 460),
+            sBam01,
+            sFastq1,
+            sFastq1Default.updated("r04", true)),
       Array("enveloped",
-        makeInterval("chrQ", 693, 698),
-        sBam01,
-        sFastq1,
-        sFastq1Default.updated("r03", true)),
+            makeInterval("chrQ", 693, 698),
+            sBam01,
+            sFastq1,
+            sFastq1Default.updated("r03", true)),
       Array(
         "partial overlap and enveloped",
         makeInterval(List(("chrQ", 693, 698), ("chrQ", 430, 460))),
@@ -142,23 +179,23 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
 
     Array(
       Array("less than minimum MAPQ",
-        makeInterval("chrQ", 830, 890),
-        sBam02,
-        60,
-        sFastq2,
-        sFastq2Default),
+            makeInterval("chrQ", 830, 890),
+            sBam02,
+            60,
+            sFastq2,
+            sFastq2Default),
       Array("greater than minimum MAPQ",
-        makeInterval("chrQ", 830, 890),
-        sBam02,
-        20,
-        sFastq2,
-        sFastq2Default.updated("r07", true)),
+            makeInterval("chrQ", 830, 890),
+            sBam02,
+            20,
+            sFastq2,
+            sFastq2Default.updated("r07", true)),
       Array("equal to minimum MAPQ",
-        makeInterval("chrQ", 260, 320),
-        sBam02,
-        30,
-        sFastq2,
-        sFastq2Default.updated("r01", true))
+            makeInterval("chrQ", 260, 320),
+            sBam02,
+            30,
+            sFastq2,
+            sFastq2Default.updated("r01", true))
     )
   }
 
@@ -180,32 +217,44 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
   @DataProvider(name = "pairAlnProvider1", parallel = true)
   def pairAlnProvider1(): Array[Array[Object]] = {
     val pFastq1 = makePairRecords(("r01", ("r01/1", "r01/2")),
-      ("r02", ("r02/1", "r02/2")),
-      ("r03", ("r03/1", "r03/2")),
-      ("r04", ("r04/1", "r04/2")),
-      ("r05", ("r05/1", "r05/2")))
+                                  ("r02", ("r02/1", "r02/2")),
+                                  ("r03", ("r03/1", "r03/2")),
+                                  ("r04", ("r04/1", "r04/2")),
+                                  ("r05", ("r05/1", "r05/2")))
     val pFastq1Default = pFastq1.keys.map(x => (x, false)).toMap
     val pBam01 = resourceFile("/paired01.bam")
 
     Array(
-      Array("adjacent left", makeInterval("chrQ", 30, 49), pBam01, pFastq1, pFastq1Default),
-      Array("adjacent right", makeInterval("chrQ", 200, 210), pBam01, pFastq1, pFastq1Default),
-      Array("no overlap", makeInterval("chrQ", 220, 230), pBam01, pFastq1, pFastq1Default),
+      Array("adjacent left",
+            makeInterval("chrQ", 30, 49),
+            pBam01,
+            pFastq1,
+            pFastq1Default),
+      Array("adjacent right",
+            makeInterval("chrQ", 200, 210),
+            pBam01,
+            pFastq1,
+            pFastq1Default),
+      Array("no overlap",
+            makeInterval("chrQ", 220, 230),
+            pBam01,
+            pFastq1,
+            pFastq1Default),
       Array("partial overlap",
-        makeInterval("chrQ", 430, 460),
-        pBam01,
-        pFastq1,
-        pFastq1Default.updated("r04", true)),
+            makeInterval("chrQ", 430, 460),
+            pBam01,
+            pFastq1,
+            pFastq1Default.updated("r04", true)),
       Array("enveloped",
-        makeInterval("chrQ", 693, 698),
-        pBam01,
-        pFastq1,
-        pFastq1Default.updated("r03", true)),
+            makeInterval("chrQ", 693, 698),
+            pBam01,
+            pFastq1,
+            pFastq1Default.updated("r03", true)),
       Array("in intron",
-        makeInterval("chrQ", 900, 999),
-        pBam01,
-        pFastq1,
-        pFastq1Default.updated("r05", true)),
+            makeInterval("chrQ", 900, 999),
+            pBam01,
+            pFastq1,
+            pFastq1Default.updated("r05", true)),
       Array(
         "partial overlap and enveloped",
         makeInterval(List(("chrQ", 693, 698), ("chrQ", 430, 460))),
@@ -232,7 +281,8 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
   }
 
   @Test def testWriteSingleFastqDefault(): Unit = {
-    val memFunc = (recs: FastqInput) => Set("r01", "r03").contains(fastqId(recs._1))
+    val memFunc = (recs: FastqInput) =>
+      Set("r01", "r03").contains(fastqId(recs._1))
     val in1 = new FastqReader(resourceFile("/single01.fq"))
     val mo1 = mock[BasicFastqWriter]
     val obs = inOrd(mo1)
@@ -245,7 +295,8 @@ class ExtractAlignedFastqTest extends ToolTest[Args] with MockitoSugar {
   @Test def testWritePairFastqDefault(): Unit = {
     val mockSet = Set("r01/1", "r01/2", "r03/1", "r03/2")
     val memFunc = (recs: FastqInput) =>
-      mockSet.contains(fastqId(recs._1)) || mockSet.contains(fastqId(recs._2.get))
+      mockSet.contains(fastqId(recs._1)) || mockSet.contains(
+        fastqId(recs._2.get))
     val in1 = new FastqReader(resourceFile("/paired01a.fq"))
     val in2 = new FastqReader(resourceFile("/paired01b.fq"))
     val mo1 = mock[BasicFastqWriter]
